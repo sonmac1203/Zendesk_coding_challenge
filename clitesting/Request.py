@@ -1,23 +1,30 @@
 import requests
+
 from .time_format import *
 from .constants import *
 
+
 class ListRequests:
+
     def __init__(self):
         self.url = 'https://' + SUBDOMAIN + '.zendesk.com/api/v2/requests.json'
     
     def getResponse(self):
+        """Return the response from the API"""
         self.response = requests.get(self.url, auth=(EMAIL+ '/token' , API_TOKEN))
         return self.response
 
     def getStatus(self):
+        """Return the status of the response"""
         self.status = self.getResponse().status_code
         return self.status
     
     def checkStatus(self):
+        """Check if the request was successfully completed"""
         return self.getStatus() == 200
 
     def informError(self):
+        """Inform the client about the error they encounter"""
         if self.status == 400:
             print("\nError: " + str(self.status) + " BAD REQUEST")
             print("Sorry, the request was invalid. Please try again")
@@ -44,17 +51,21 @@ class ListRequests:
             print("Sorry, the server was unvailable. Please try again")
 
     def viewResponse(self):
-        responses_json = self.getResponse().json()
+        """Display the list of tickets to the console"""
+        responses_json = self.getResponse().json()  # Convert the response to json format
         total_tickets = responses_json['count']
-        print("\nThere are {} tickets to display".format(total_tickets))
-        for i in range(25):
+        print("\nThere are {} tickets to display".format(total_tickets))  # Display the total number of tickets 
+        for i in range(25):  # Show the first 25 tickets
                 subject = responses_json['requests'][i]['subject']
                 requester_id = responses_json['requests'][i]['requester_id']
                 date = get_date(responses_json['requests'][i]['created_at'])
                 time = get_time(responses_json['requests'][i]['created_at'])
                 print("\n{0}. Ticket with subject '{1}', requested by {2} on {3} at {4} GMT".format(i+1, subject, requester_id, date, time))
+
+        # The if statement below executes if there are more than 25 tickets
+        # and they need to be shown in different pages
         if total_tickets > 25:
-            total_pages = (total_tickets-1)//25 + 1
+            total_pages = (total_tickets-1) // 25 + 1
             print("\n\tThere are {} pages in total".format(total_pages))
             while (True):
                 print("\n\t-> Press 1 to go to other pages")
@@ -71,7 +82,7 @@ class ListRequests:
                         except ValueError:
                             print("\n\tPlease enter an integer no greater than {}".format(total_pages))
                         
-                    for i in range(25*(page-1), 25*page):
+                    for i in range(25*(page-1), 25*page):  # Display the tickets in the corresponding page
                         subject = responses_json['requests'][i]['subject']
                         requester_id = responses_json['requests'][i]['requester_id']
                         date = get_date(responses_json['requests'][i]['created_at'])
@@ -79,14 +90,18 @@ class ListRequests:
                         print("\n{0}. Ticket with subject '{1}', requested by {2} on {3} at {4} GMT".format(i+1, subject, requester_id, date, time))
                 elif ans == '2':
                     return
+                else:
+                    print("\n\tPlease choose again")
 
 
 class ShowRequest(ListRequests):
+
     def __init__(self, id):
         self.url = 'https://' + SUBDOMAIN + '.zendesk.com/api/v2/requests/' + str(id+1) + '.json'
 
     def viewResponse(self):
-        ticket_json = self.getResponse().json()
+        """Display the chosen ticket to the console"""
+        ticket_json = self.getResponse().json()  # Convert the response to json format 
         subject = ticket_json['request']['subject']
         requester_id = ticket_json['request']['requester_id']
         date = get_date(ticket_json['request']['created_at'])

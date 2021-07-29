@@ -1,5 +1,6 @@
 from .Request import *
 
+
 def main():
     print('\nWELCOME TO THE TICKET VIEWER\n')
     flag_ans_1 = True
@@ -38,7 +39,9 @@ def main():
         else:
             print("\n\tPlease choose again\n")
 
+
 def getOption():
+    """Receive an option from the client"""
     print("\n\tSelect one of the options below:")
     print("\t-> Press 1 to view all the tickets")
     print("\t-> Press 2 to view a single ticket")
@@ -46,7 +49,9 @@ def getOption():
     answer = input("\n\tChoice: ")
     return answer
 
+
 def getTicketNumber():
+    """Receive the ticket number to display"""
     while True:
         try:
             ans = int(input("\tPlease enter ticket number: "))
@@ -54,6 +59,7 @@ def getTicketNumber():
         except ValueError:
             print("\n\tPlease enter an integer\n")
     return ans
+
 
 if __name__ == '__main__':
     main()
