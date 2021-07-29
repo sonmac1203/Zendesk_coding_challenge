@@ -1,0 +1,10 @@
+setup.py
+clitesting/__init__.py
+clitesting/__main__.py
+clitesting/funcmodule.py
+clitesting/time_format.py
+clitesting.egg-info/PKG-INFO
+clitesting.egg-info/SOURCES.txt
+clitesting.egg-info/dependency_links.txt
+clitesting.egg-info/entry_points.txt
+clitesting.egg-info/top_level.txt

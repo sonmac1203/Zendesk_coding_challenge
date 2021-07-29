@@ -1,0 +1,3 @@
+[console_scripts]
+clitesting = clitesting.__main__:main
+
