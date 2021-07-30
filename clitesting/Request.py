@@ -18,7 +18,7 @@ class ListRequests:
             self.subdomain = authentication.subdomain
             self.email = authentication.email
             self.api_token = authentication.api_token
-            self.page_size = 50
+            self.page_size = 25
         self.url = 'https://' + self.subdomain + '.zendesk.com/api/v2/tickets.json?page[size]=' + str(self.page_size)
     
     def setURL(self, url):
@@ -38,17 +38,13 @@ class ListRequests:
         return status
     
     def getTotalTickets(self):
-        """Calculate the total number of tickets using the Count Tickets API"""
-        response = requests.get(
-            'https://' + self.subdomain + '.zendesk.com/api/v2/tickets/count.json',
-            auth = (self.email + '/token', self.api_token)
-        )
-        return response.json()['count']['value']
-
-    def getTotalPages(self):
-        """Calculate the total number of pages"""
-        total_pages = (self.getTotalTickets()-1) // self.page_size + 1
-        return total_pages
+        """Return the total number of tickets using the Count Tickets API and return None if error"""
+        count = CountTickets()
+        if count.checkStatus():
+            return count.getResponse().json()['count']['value']
+        else:
+            count.informError()
+            return None
 
     def checkStatus(self):
         """Check if the request was successfully completed"""
@@ -56,8 +52,19 @@ class ListRequests:
 
     def viewResponse(self):
         """Display the list of tickets to the console"""
-        total_tickets = self.getTotalTickets()
-        print("\n\tThere are {} tickets to display".format(total_tickets))
+        while True: # Ask if the user wants to see the total number of tickets then call the API
+            ans_ticket = input("\n\tDo you want to determine the total number of tickets? (yes/no): ")
+            if ans_ticket in ['yes', 'YES', 'Yes']:
+                print("\n\tGetting the numnber of tickets ...")
+                total_tickets = self.getTotalTickets()
+                if total_tickets:
+                    print("\n\tThere are {} tickets to display".format(total_tickets))
+                else:
+                    print("\n\tCannot determine the number of tickets")
+                break
+            elif ans_ticket in ['no', 'NO', 'No']:
+                break
+                        
         page_number = 1
         while True:
             responses_json = self.getResponse().json()  # Convert the response to json format
@@ -69,31 +76,30 @@ class ListRequests:
                 time = get_time(ticket['created_at'])
                 print("\n{0}. Ticket with subject '{1}', requested by {2} on {3} at {4}".format(id, subject, requester_id, date, time))
             print("\n\tPage {}".format(page_number))
-            if self.getTotalPages() == 1:
-                print("\n\tThere is 1 page of tickets")
-            else:
-                print("\n\tThere are {} pages of tickets".format(self.getTotalPages()))
-                while True:    
-                    print("\n\t-> Press 1 to go to the previous page")
-                    print("\t-> Press 2 to go to the next page")
-                    print("\t-> Press 3 to proceed")
-                    ans = input("\n\tChoice: ")
-                    if ans == '1':
-                        self.setURL(responses_json['links']['prev'])
-                        page_number -= 1
-                        if page_number < 1:
-                            print("\n\tYou are at the first page")
-                        else: break
-                    elif ans == '2':
-                        self.setURL(responses_json['links']['next'])
+            while True:    
+                print("\n\t-> Press 1 to go to the previous page")
+                print("\t-> Press 2 to go to the next page")
+                print("\t-> Press 3 to proceed")
+                ans = input("\n\tChoice: ")
+                if ans == '1':
+                    self.setURL(responses_json['links']['prev'])
+                    page_number -= 1
+                    if page_number < 1:
+                        print("\n\tYou are at the first page")
                         page_number += 1
-                        if page_number > self.getTotalPages():
-                            print("\n\tYou are at the final page")
-                        else: break
-                    elif ans == '3':
-                        return
-                    else: 
-                        print("\n\tPlease choose again")
+                    else: break
+                elif ans == '2':
+                    self.setURL(responses_json['links']['next'])
+                    page_number += 1
+                    if not responses_json['meta']['has_more']:
+                        print("\n\tYou are at the final page")
+                        page_number -= 1
+                    else: break
+                elif ans == '3':
+                    return
+                else: 
+                    print("\n\tPlease choose again")
+
 
     def informError(self):
         """Inform the client about the error they encounter"""
@@ -123,7 +129,6 @@ class ListRequests:
             print("Sorry, the server was unvailable. Please try again")
 
 
-
 class ShowRequest(ListRequests):
 
     def __init__(self, id, subdomain = None, email = None, api_token = None):
@@ -146,6 +151,21 @@ class ShowRequest(ListRequests):
         requester_id = ticket_json['ticket']['requester_id']
         date = get_date(ticket_json['ticket']['created_at'])
         time = get_time(ticket_json['ticket']['created_at'])
-        print("\nTicket with subject '{0}', requested by {1} on {2} at {3} GMT\n".format(subject, requester_id, date, time))
+        print("\nTicket with subject '{0}', requested by {1} on {2} at {3} GMT".format(subject, requester_id, date, time))
 
 
+class CountTickets(ShowRequest):
+
+    def __init__(self, subdomain = None, email = None, api_token = None):
+        """Set dafault/customized authentication factors, page size, and URL of the request"""
+        if subdomain and email and api_token:
+            self.subdomain = subdomain
+            self.email = email
+            self.api_token = api_token
+        else:
+            authentication = Authentication()
+            self.subdomain = authentication.subdomain
+            self.email = authentication.email
+            self.api_token = authentication.api_token
+        self.url = 'https://' + self.subdomain + '.zendesk.com/api/v2/tickets/count.json'
+    
