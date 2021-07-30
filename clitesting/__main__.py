@@ -1,4 +1,4 @@
-from .Request import *
+from .request import *
 
 
 def main():
@@ -42,7 +42,7 @@ def main():
 
 def getOption():
     """Receive an option from the client"""
-    print("\n\tSelect one of the options below:")
+    print("\n\tMAIN MENU: Select one of the options below:")
     print("\t-> Press 1 to view all the tickets")
     print("\t-> Press 2 to view a single ticket")
     print("\t-> Type 'quit' to exit the program")
@@ -54,7 +54,7 @@ def getTicketNumber():
     """Receive the ticket number to display"""
     while True:
         try:
-            ans = int(input("\tPlease enter ticket number: "))
+            ans = int(input("\tPlease enter ticket id: "))
             break
         except ValueError:
             print("\n\tPlease enter an integer\n")
