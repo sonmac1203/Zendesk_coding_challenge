@@ -1,6 +1,6 @@
-def get_date(string):
+def getDate(string):
 	return string.split("T")[0]
 
-def get_time(string):
+def getTime(string):
 	string = string[:-1]
 	return string.split("T")[1]
