@@ -3,14 +3,14 @@ from .request import *
 def main():
 
     print('\nWELCOME TO THE TICKET VIEWER')
-    print('\nDo you want to use the default settings or customized settings?')
+    print('\nDo you want to use the default settings or customized settings (for testing purpose)?')
     while True:
         ans_custom = getOptionStart()  # Receives '1' or '2' or 'quit'
         if ans_custom == '1':
             custom = False
         elif ans_custom == '2':
             subdomain = input("-> Please enter your Zendesk subdomain: ")
-            email = input("-> Please enter your email: ")
+            email = input("-> Please enter your email address: ")
             api_token = input("-> Please enter your API token: ")
             custom = True
         else:
@@ -36,7 +36,7 @@ def main():
                 else: 
                     request = ShowRequest(ticket_id)
                 if (request.checkStatus()): # Check if there is any issue with the request
-                    print("\n\tSuccessfully requested the tickets! Please wait ...")
+                    print("\n\tSuccessfully requested the ticket! Please wait ...")
                     request.viewResponse()
                 else:
                     break

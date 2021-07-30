@@ -29,6 +29,11 @@ class ListRequests:
         response = requests.get(self.url, auth = (self.email + '/token' , self.api_token))
         return response
 
+    def getTotalTickets(self):
+        """Return the total number of tickets using the Count Tickets API and return None if error"""
+        count = CountTickets(self.subdomain, self.email, self.api_token)
+        return count.getResponse().json()['count']['value']
+
     def checkInformError(self):
         """Check for errors when making the request, catch them, and inform them"""
         try:
@@ -52,19 +57,14 @@ class ListRequests:
             return True
         return False
 
-    def getTotalTickets(self):
-        """Return the total number of tickets using the Count Tickets API and return None if error"""
-        count = CountTickets(self.subdomain, self.email, self.api_token)
-        return count.getResponse().json()['count']['value']
-
     def checkStatus(self):
         """Check if the request was successfully completed"""
         return not self.checkInformError()
 
     def viewResponse(self):
         """Display the list of tickets to the console"""
-        while True: # Ask if the user wants to see the total number of tickets then call the API
-            ans_ticket = input("\n\tDo you want to determine the total number of tickets? (yes/no): ")
+        while True:  # Ask if the user wants to see the total number of tickets then call the API
+            ans_ticket = input("\n\tDo you want to see the total number of tickets? (yes/no): ")
             if ans_ticket in ['yes', 'YES', 'Yes', 'y']:
                 print("\n\tGetting the numnber of tickets ...")
                 total_tickets = self.getTotalTickets()
@@ -78,19 +78,34 @@ class ListRequests:
                         
         page_number = 1
         while True:
-            responses_json = self.getResponse().json()  # Convert the response to json format
-            for ticket in responses_json['tickets']:
-                print("\n{0}. Ticket with subject '{1}', requested by {2} on {3} at {4} GMT".format(
-                    ticket['id'],
-                    ticket['subject'],
-                    ticket['requester_id'],
-                    getDate(ticket['created_at']),
-                    getTime(ticket['created_at'])))
-            print("\n\tPage {}".format(page_number))
+            while True:  # This loop helps to reload the page
+                responses_json = self.getResponse().json()  # Convert the response to json format
+                if responses_json['tickets']:
+                    for ticket in responses_json['tickets']:  # Looping through the list of tickets and print each of them out
+                        print("\n#{0} - Ticket with subject '{1}', requested by {2} on {3} at {4} UTC".format(
+                            ticket['id'],
+                            ticket['subject'],
+                            ticket['requester_id'],
+                            getDate(ticket['created_at']),
+                            getTime(ticket['created_at'])))
+                    print("\n\tPage {}".format(page_number))
+                    break
+                else: 
+                    print("\nAll tickets have been displayed on the previous page")
+                    print("\n\t-> Press 1 to Reload")
+                    print("\t-> Press 2 to go back to MAIN MENU")
+                    print("\tNOTE: Reload if you have recently added a new ticket.")
+                    while True:
+                        ans = input("\n\tChoice: ")
+                        if ans == '1':
+                            break
+                        elif ans == '2':
+                            return
             while True:    
                 print("\n\t-> Press 1 to go to the previous page")
                 print("\t-> Press 2 to go to the next page")
                 print("\t-> Press 3 to go back to MAIN MENU")
+                print("\tNOTE: If the next page has no ticket to display, you CANNOT go back. Sorry for this inconvenient!")
                 ans = input("\n\tChoice: ")
                 if ans == '1':
                     self.setURL(responses_json['links']['prev'])
@@ -114,7 +129,7 @@ class ListRequests:
                     print("\n\tPlease choose again")
 
     def informError(self, status):
-        """Inform the client about the error they encounter"""
+        """Inform the user about the code error they encounter when making the request"""
         if status == 400:
             print("\nError: " + str(status) + " BAD REQUEST")
             print("Sorry, the request was invalid. Please try again")
@@ -183,11 +198,13 @@ class ShowRequest(ListRequests):
     def viewResponse(self):
         """Display the chosen ticket to the console"""
         ticket_json = self.getResponse().json()  # Convert the response to json format 
-        print("\nTicket with subject '{0}', requested by {1} on {2} at {3} GMT".format(
+        print("\n#{0} - Ticket with subject '{1}', requested by {2} on {3} at {4} UTC\n-> Description: {5}".format(  # Display the desired ticket
+            ticket_json['ticket']['id'],
             ticket_json['ticket']['subject'],
             ticket_json['ticket']['requester_id'],
             getDate(ticket_json['ticket']['created_at']),
-            getTime(ticket_json['ticket']['created_at'])))
+            getTime(ticket_json['ticket']['created_at']),
+            ticket_json['ticket']['description']))
 
 
 class CountTickets(ShowRequest):
@@ -201,5 +218,5 @@ class CountTickets(ShowRequest):
     
 
 class RequestCodeError(Exception):
-    """Create a custom exception"""
+    """Create a custom exception called RequestCodeError"""
     pass
