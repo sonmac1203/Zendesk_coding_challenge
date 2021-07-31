@@ -2,7 +2,7 @@ from ticket_cli.request import *
 
 def main():
 
-    print('\nWELCOME TO THE TICKET VIEWER')
+    print('\n-----------------------------WELCOME TO THE TICKET VIEWER-----------------------------')
     print('\nDo you want to use the default settings or customized settings (for testing purposes)?')
     while True:
         ans_custom = getOptionStart()  # Receives '1' or '2' or 'quit'
@@ -25,7 +25,7 @@ def main():
                 else:
                     request = ListRequests()
                 if (request.checkStatus()): # Check if there is any issue with the request
-                    print("\n\tSuccessfully requested the tickets! Please wait ...")
+                    print("\nSuccessfully requested the tickets! Please wait ...")
                     request.viewResponse()
                 else:
                     break
@@ -36,7 +36,7 @@ def main():
                 else: 
                     request = ShowRequest(ticket_id)
                 if (request.checkStatus()): # Check if there is any issue with the request
-                    print("\n\tSuccessfully requested the ticket! Please wait ...")
+                    print("\nSuccessfully requested the ticket! Please wait ...")
                     request.viewResponse()
                 else:
                     break
@@ -48,25 +48,25 @@ def getTicketId():
     """Receive the ticket number to display"""
     while True:
         try:
-            ans = int(input("\tPlease enter ticket id: "))
+            ans = int(input("Please enter ticket #id: "))
             break
         except ValueError:
-            print("\n\tPlease enter an integer\n")
+            print("\nPlease enter an integer\n")
     return ans
 
 # Methods to display menus and statements
 def getOptionMainMenu():
     """Receive an option from the user in the MAIN MENU"""
     while True:
-        print("\n\tMAIN MENU: Select one of the options below:")
-        print("\t-> Press 1 to view all the tickets")
-        print("\t-> Press 2 to view a single ticket")
-        print("\t-> Type 'quit' to exit the program")
-        ans = input("\n\tChoice: ")
+        print("\nMAIN MENU: Select one of the options below:")
+        print("-> Press 1 to view all the tickets")
+        print("-> Press 2 to view a single ticket")
+        print("-> Type 'quit' to exit the program")
+        ans = input("\nChoice: ")
         if ans in ['1', '2', 'quit', 'QUIT', 'Quit', 'Q']:
             break
         else:
-            print("\n\tPlease choose again")
+            print("\nPlease choose again")
     return ans
 
 def getOptionStart():

@@ -64,14 +64,14 @@ class ListRequests:
     def viewResponse(self):
         """Display the list of tickets to the console"""
         while True:  # Ask if the user wants to see the total number of tickets then call the API
-            ans_ticket = input("\n\tDo you want to see the total number of tickets? (yes/no): ")
+            ans_ticket = input("\nDo you want to see the total number of tickets? (yes/no): ")
             if ans_ticket in ['yes', 'YES', 'Yes', 'y']:
-                print("\n\tGetting the numnber of tickets ...")
+                print("\nGetting the numnber of tickets ...")
                 total_tickets = self.getTotalTickets()
                 if total_tickets:
-                    print("\n\tThere are {} tickets at the moment".format(total_tickets))
+                    print("\nThere are {} tickets at the moment".format(total_tickets))
                 else:
-                    print("\n\tCannot determine the number of tickets")
+                    print("\nCannot determine the number of tickets")
                 break
             elif ans_ticket in ['no', 'NO', 'No', 'n']:
                 break
@@ -88,30 +88,30 @@ class ListRequests:
                             ticket['requester_id'],
                             getDate(ticket['created_at']),
                             getTime(ticket['created_at'])))
-                    print("\n\tPage {}".format(page_number))
+                    print("\nPage {}".format(page_number))
                     break
                 else: 
                     print("\nNo ticket to display")
-                    print("\n\t-> Press 1 to Reload")
-                    print("\t-> Press 2 to go back to MAIN MENU")
-                    print("\tNOTE: Reload if you have recently added a new ticket.")
+                    print("\n-> Press 1 to Reload")
+                    print("-> Press 2 to go back to MAIN MENU")
+                    print("NOTE: Reload if you have recently added a new ticket.")
                     while True:
-                        ans = input("\n\tChoice: ")
+                        ans = input("\nChoice: ")
                         if ans == '1':
                             break
                         elif ans == '2':
                             return
             while True:    
-                print("\n\t-> Press 1 to go to the previous page")
-                print("\t-> Press 2 to go to the next page")
-                print("\t-> Press 3 to go back to MAIN MENU")
-                print("\tNOTE: If the next page has no ticket to display, you CANNOT go back. Sorry for this inconvenience!")
-                ans = input("\n\tChoice: ")
+                print("\n-> Press 1 to go to the previous page")
+                print("-> Press 2 to go to the next page")
+                print("-> Press 3 to go back to MAIN MENU")
+                print("NOTE: If the next page has no ticket to display, you CANNOT go back. Sorry for this inconvenience!")
+                ans = input("\nChoice: ")
                 if ans == '1':
                     self.setURL(responses_json['links']['prev'])
                     page_number -= 1
                     if page_number < 1: 
-                        print("\n\tYou are at the first page")
+                        print("\nYou are at the first page")
                         page_number += 1
                     else: 
                         break
@@ -119,14 +119,14 @@ class ListRequests:
                     self.setURL(responses_json['links']['next'])
                     page_number += 1
                     if not responses_json['meta']['has_more']:
-                        print("\n\tYou are at the final page")
+                        print("\nYou are at the final page")
                         page_number -= 1
                     else: 
                         break
                 elif ans == '3':
                     return
                 else: 
-                    print("\n\tPlease choose again")
+                    print("\nPlease choose again")
 
     def informError(self, status):
         """Inform the user about the code error they encounter when making the request"""
