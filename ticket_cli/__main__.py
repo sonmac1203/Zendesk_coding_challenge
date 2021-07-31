@@ -1,4 +1,4 @@
-from .request import *
+from ticket_cli.request import *
 
 def main():
 
