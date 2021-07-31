@@ -63,10 +63,6 @@ class ListRequests:
             return True
         return False
 
-    def checkStatus(self):
-        """Check if the request was successfully completed"""
-        return not self.checkInformError()
-
     def viewResponse(self):
         """Display the list of tickets to the console"""
         while True:  # Ask if the user wants to see the total number of tickets then call the API
