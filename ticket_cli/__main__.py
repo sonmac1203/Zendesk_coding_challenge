@@ -25,7 +25,7 @@ def main():
                     request = ListRequests(subdomain, email, api_token)
                 else:
                     request = ListRequests()
-                if (request.checkStatus()): # Check if there is any issue with the request
+                if (not request.checkInformError()): # Check if there is any issue with the request
                     print("\nSuccessfully requested the tickets! Please wait ...")
                     request.viewResponse()
                 else:
@@ -36,7 +36,7 @@ def main():
                     request = ShowRequest(ticket_id, subdomain, email, api_token)
                 else: 
                     request = ShowRequest(ticket_id)
-                if (request.checkStatus()): # Check if there is any issue with the request
+                if (not request.checkInformError()): # Check if there is any issue with the request
                     print("\nSuccessfully requested the ticket! Please wait ...")
                     request.viewResponse()
                 else:

@@ -1,3 +1,5 @@
+from ticket_cli.error_display import printConnectionError
+
 def printMainMenu():
     """Display options in Main Menu"""
     print("\nMAIN MENU: Select one of the options below:")
@@ -21,6 +23,13 @@ def printPageMenu():
 def printEmptyPageMenu():
     """Display options when loaded page is empty"""
     print("\nNo ticket to display")
+    print("\n-> Press 1 to Reload")
+    print("-> Press 2 to go back to MAIN MENU")
+    print("NOTE: Reload if you have recently added a new ticket.")
+
+def printConnectionErrorMenu():
+    """Display options when loading next page fails due to ConnectionError"""
+    printConnectionError()
     print("\n-> Press 1 to Reload")
     print("-> Press 2 to go back to MAIN MENU")
     print("NOTE: Reload if you have recently added a new ticket.")
