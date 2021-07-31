@@ -1,8 +1,8 @@
 import unittest
 import requests
 
-from clitesting.request import *
-from clitesting.constants import *
+from ticket_cli.request import *
+from ticket_cli.constants import *
 
 class TestRequest(unittest.TestCase):
     """Tests for the class ListRequests and ShowRequest"""
@@ -13,11 +13,11 @@ class TestRequest(unittest.TestCase):
         self.request_1 = ListRequests()  # Default
         self.request_2 = ListRequests('notasubdomain', 'notanemailaddress@fmail.com', 'notanapitoken')  # Parameterized
         self.request_3 = ListRequests(SUBDOMAIN, 'notanemailaddress@fmail.com', 'notanapitoken')
-        self.request_7 = ListRequests(SUBDOMAIN, EMAIL, API_TOKEN, 101)
+        self.request_4 = ListRequests(SUBDOMAIN, EMAIL, API_TOKEN, 101)
+        
         # Show Request
-        self.request_4 = ShowRequest(50)  # Default
-        self.request_5 = ShowRequest(10000000,'notasubdomain', 'notanemailaddress@fmail.com', 'notanapitoken')  # Parameterized
-        self.request_6 = ShowRequest(1, SUBDOMAIN, EMAIL, 'notanapitoken')
+        self.request_6 = ShowRequest(10000000,'notasubdomain', 'notanemailaddress@fmail.com', 'notanapitoken')  # Parameterized
+        self.request_7 = ShowRequest(1, SUBDOMAIN, EMAIL, 'notanapitoken')
         
         # Count Request
         self.request_8 = CountTickets('', EMAIL, API_TOKEN)
@@ -30,29 +30,27 @@ class TestRequest(unittest.TestCase):
         self.status_1 = self.request_1.getResponse().status_code
         self.assertEqual(self.status_1, 200)
         
-        self.status_4 = self.request_4.getResponse().status_code
-        self.assertEqual(self.status_4, 200)
         
     def test_request_code_404(self):
         """Test if the request returns code 404"""
         self.status_2 = self.request_2.getResponse().status_code
         self.assertEqual(self.status_2, 404)
 
-        self.status_5 = self.request_5.getResponse().status_code
-        self.assertEqual(self.status_5, 404)
+        self.status_6 = self.request_6.getResponse().status_code
+        self.assertEqual(self.status_6, 404)
 
     def test_request_code_401(self):
         """Test if the request returns code 401"""
         self.status_3 = self.request_3.getResponse().status_code
         self.assertEqual(self.status_3, 401)
     
-        self.status_6 = self.request_6.getResponse().status_code
-        self.assertEqual(self.status_6, 401)
+        self.status_7 = self.request_7.getResponse().status_code
+        self.assertEqual(self.status_7, 401)
 
     def test_request_code_400(self):
         """Test if the request returns code 400"""
-        self.status_7 = self.request_7.getResponse().status_code
-        self.assertEqual(self.status_7, 400)
+        self.status_4 = self.request_4.getResponse().status_code
+        self.assertEqual(self.status_4, 400)
 
     # Test exceptions thrown
     def test_RequestCodeError_thrown(self):
@@ -84,10 +82,7 @@ class TestRequest(unittest.TestCase):
         self.assertIs(self.check_3, True)
 
         self.check_4 = self.request_4.checkError()
-        self.assertIsNot(self.check_4, True)
-
-        self.check_5 = self.request_5.checkError()
-        self.assertIs(self.check_5, True)
+        self.assertIs(self.check_4, True)
 
         self.check_6 = self.request_6.checkError()
         self.assertIs(self.check_6, True)
@@ -98,12 +93,3 @@ class TestRequest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-        
-
-        
-        
-        
-        
-
-
