@@ -1,10 +1,10 @@
 from setuptools import setup
 setup(
-    name = 'clitesting',
+    name = 'ticket_cli',
     version = '0.1.0',
-    packages = ['clitesting'],
+    packages = ['ticket_cli'],
     entry_points = {
         'console_scripts': [
-            'clitesting = clitesting.__main__:main'
+            'ticket_cli = ticket_cli.__main__:main'
         ]
 })
