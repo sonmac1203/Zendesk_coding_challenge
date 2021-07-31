@@ -1,6 +1,6 @@
 import unittest
 
-from clitesting.time_format import *
+from ticket_cli.time_format import *
 
 
 class DateTestCase(unittest.TestCase):
