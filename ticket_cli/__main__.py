@@ -3,7 +3,7 @@ from ticket_cli.request import *
 def main():
 
     print('\nWELCOME TO THE TICKET VIEWER')
-    print('\nDo you want to use the default settings or customized settings (for testing purpose)?')
+    print('\nDo you want to use the default settings or customized settings (for testing purposes)?')
     while True:
         ans_custom = getOptionStart()  # Receives '1' or '2' or 'quit'
         if ans_custom == '1':
@@ -73,7 +73,7 @@ def getOptionStart():
     """Receive an option from the user at the beginning of the program"""
     while True: 
         print('\n-> Press 1 to go with default settings')
-        print('-> Press 2 to go with customized settings')
+        print('-> Press 2 to go with customized settings (for testing purposes)')
         print("-> Type 'quit' to exit the program")
         ans = input("\nChoice: ")
         if ans in ['1', '2', 'quit', 'QUIT', 'Quit', 'Q']:
