@@ -1,7 +1,7 @@
 import requests
 
-from .constants import *
-from .time_format import *
+from ticket_cli.constants import *
+from ticket_cli.time_format import *
 
 
 class ListRequests:
@@ -91,7 +91,7 @@ class ListRequests:
                     print("\n\tPage {}".format(page_number))
                     break
                 else: 
-                    print("\nAll tickets have been displayed on the previous page")
+                    print("\nNo ticket to display")
                     print("\n\t-> Press 1 to Reload")
                     print("\t-> Press 2 to go back to MAIN MENU")
                     print("\tNOTE: Reload if you have recently added a new ticket.")
@@ -105,7 +105,7 @@ class ListRequests:
                 print("\n\t-> Press 1 to go to the previous page")
                 print("\t-> Press 2 to go to the next page")
                 print("\t-> Press 3 to go back to MAIN MENU")
-                print("\tNOTE: If the next page has no ticket to display, you CANNOT go back. Sorry for this inconvenient!")
+                print("\tNOTE: If the next page has no ticket to display, you CANNOT go back. Sorry for this inconvenience!")
                 ans = input("\n\tChoice: ")
                 if ans == '1':
                     self.setURL(responses_json['links']['prev'])
