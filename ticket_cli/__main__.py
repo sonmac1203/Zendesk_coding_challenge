@@ -1,4 +1,5 @@
 from ticket_cli.request import *
+from ticket_cli.menus import printMainMenu, printStartMenu
 
 def main():
 
@@ -58,10 +59,7 @@ def getTicketId():
 def getOptionMainMenu():
     """Receive an option from the user in the MAIN MENU"""
     while True:
-        print("\nMAIN MENU: Select one of the options below:")
-        print("-> Press 1 to view all the tickets")
-        print("-> Press 2 to view a single ticket")
-        print("-> Type 'quit' to exit the program")
+        printMainMenu()
         ans = input("\nChoice: ")
         if ans in ['1', '2', 'quit', 'QUIT', 'Quit', 'Q']:
             break
@@ -72,9 +70,7 @@ def getOptionMainMenu():
 def getOptionStart():
     """Receive an option from the user at the beginning of the program"""
     while True: 
-        print('\n-> Press 1 to go with default settings')
-        print('-> Press 2 to go with customized settings (for testing purposes)')
-        print("-> Type 'quit' to exit the program")
+        printStartMenu()
         ans = input("\nChoice: ")
         if ans in ['1', '2', 'quit', 'QUIT', 'Quit', 'Q']:
             break

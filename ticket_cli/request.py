@@ -2,6 +2,7 @@ import requests
 
 from ticket_cli.constants import *
 from ticket_cli.time_format import *
+from ticket_cli.menus import printPageMenu, printEmptyPageMenu
 
 
 class ListRequests:
@@ -91,10 +92,7 @@ class ListRequests:
                     print("\nPage {}".format(page_number))
                     break
                 else: 
-                    print("\nNo ticket to display")
-                    print("\n-> Press 1 to Reload")
-                    print("-> Press 2 to go back to MAIN MENU")
-                    print("NOTE: Reload if you have recently added a new ticket.")
+                    printEmptyPageMenu()
                     while True:
                         ans = input("\nChoice: ")
                         if ans == '1':
@@ -102,10 +100,7 @@ class ListRequests:
                         elif ans == '2':
                             return
             while True:    
-                print("\n-> Press 1 to go to the previous page")
-                print("-> Press 2 to go to the next page")
-                print("-> Press 3 to go back to MAIN MENU")
-                print("NOTE: If the next page has no ticket to display, you CANNOT go back. Sorry for this inconvenience!")
+                printPageMenu()
                 ans = input("\nChoice: ")
                 if ans == '1':
                     self.setURL(responses_json['links']['prev'])
