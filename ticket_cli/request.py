@@ -2,7 +2,8 @@ import requests
 
 from ticket_cli.constants import *
 from ticket_cli.time_format import *
-from ticket_cli.menus import printPageMenu, printEmptyPageMenu
+from ticket_cli.menus import printPageMenu, printEmptyPageMenu, printConnectionErrorMenu
+from ticket_cli.error_display import *
 
 
 class ListRequests:
@@ -33,7 +34,10 @@ class ListRequests:
     def getTotalTickets(self):
         """Return the total number of tickets using the Count Tickets API and return None if error"""
         count = CountTickets(self.subdomain, self.email, self.api_token)
-        return count.getResponse().json()['count']['value']
+        try:
+            return count.getResponse().json()['count']['value']
+        except requests.exceptions.ConnectionError:
+            return None
 
     def checkInformError(self):
         """Check for errors when making the request, catch them, and inform them"""
@@ -41,17 +45,18 @@ class ListRequests:
             response = requests.get(self.url, auth = (self.email + '/token' , self.api_token))
             if response.status_code != 200:
                 raise RequestCodeError
+
+        except requests.exceptions.ConnectionError:
+            printConnectionError()
+            return True
         except UnicodeError:
-            print("\nError: UnicodeError")
-            print("The subdomain was not appropriate. Please try again")
+            printUnicodeError()
             return True
         except requests.exceptions.InvalidURL:
-            print("\nError: InvalidURL")
-            print("The request URL was invalid. Please try again")
+            printInvalidURL()
             return True
         except requests.exceptions.Timeout:
-            print("\nError: Timeut")
-            print("The request timed out. Please try again")
+            printTimeout()
             return True
         except RequestCodeError:
             self.informError(response.status_code)
@@ -80,19 +85,31 @@ class ListRequests:
         page_number = 1
         while True:
             while True:  # This loop helps to reload the page
-                responses_json = self.getResponse().json()  # Convert the response to json format
-                if responses_json['tickets']:
-                    for ticket in responses_json['tickets']:  # Looping through the list of tickets and print each of them out
-                        print("\n#{0} - Ticket with subject '{1}', requested by {2} on {3} at {4} UTC".format(
-                            ticket['id'],
-                            ticket['subject'],
-                            ticket['requester_id'],
-                            getDate(ticket['created_at']),
-                            getTime(ticket['created_at'])))
-                    print("\nPage {}".format(page_number))
-                    break
-                else: 
-                    printEmptyPageMenu()
+                try:
+                    responses_json = self.getResponse().json()  # Convert the response to json format
+                    if responses_json['tickets']:
+                        for ticket in responses_json['tickets']:  # Looping through the list of tickets and print each of them out
+                            print("\n#{0} - Ticket with subject '{1}', requested by {2} on {3} at {4} UTC".format(
+                                ticket['id'],
+                                ticket['subject'],
+                                ticket['requester_id'],
+                                getDate(ticket['created_at']),
+                                getTime(ticket['created_at'])))
+                        print("\nPage {}".format(page_number))
+                        break
+                    else:  # Executes when there is no ticket on the page
+                        printEmptyPageMenu()
+                        while True:
+                            ans = input("\nChoice: ")
+                            if ans == '1':
+                                break
+                            elif ans == '2':
+                                return
+
+                # Handle ConnectionError when 
+                # loading a new page fails
+                except requests.exceptions.ConnectionError:
+                    printConnectionErrorMenu()
                     while True:
                         ans = input("\nChoice: ")
                         if ans == '1':
@@ -126,29 +143,21 @@ class ListRequests:
     def informError(self, status):
         """Inform the user about the code error they encounter when making the request"""
         if status == 400:
-            print("\nError: " + str(status) + " BAD REQUEST")
-            print("Sorry, the request was invalid. Please try again")
+            print400Error()
         elif status == 401:
-            print("\nError: " + str(status) + " UNAUTHORIZED")
-            print("Sorry, the request did not consist of an authentication token or the authentication token was expired. Please try again")
+            print401Error()
         elif status == 403:
-            print("\nError: " + str(status) + " FORBIDDEN")
-            print("Sorry, you did not have permission to access the requested resource. Please try again")
+            print403Error()
         elif status == 404:
-            print("\nError: " + str(status) + " NOT FOUND")
-            print("Sorry, the requested resource was not found. Please try again")
+            print404Error()
         elif status == 405:
-            print("\nError: " + str(status) + " METHOD NOT ALLOWED")
-            print("Sorry, the HTTP method in the request was not supported by the resource. Please try again")
+            print405Error()
         elif status == 409:
-            print("\nError: " + str(status) + " CONFLICT")
-            print("Sorry, the request could not be completed due to a conflict. Please try again")
+            print409Error()
         elif status == 500:
-            print("\nError: " + str(status) + " INTERNAL SERVER ERROR")
-            print("Sorry, the request was not completed because of an internal error on the server side. Please try again")
+            print500Error()
         elif status == 503:
-            print("\nError: " + str(status) + " SERVICE UNAVAILABLE")
-            print("Sorry, the server was unvailable. Please try again")
+            print503Error()
 
     # Methods for unit testing
     def raiseRequestCodeError(self):
@@ -192,14 +201,17 @@ class ShowRequest(ListRequests):
 
     def viewResponse(self):
         """Display the chosen ticket to the console"""
-        ticket_json = self.getResponse().json()  # Convert the response to json format 
-        print("\n#{0} - Ticket with subject '{1}', requested by {2} on {3} at {4} UTC\n-> Description: {5}".format(  # Display the desired ticket
-            ticket_json['ticket']['id'],
-            ticket_json['ticket']['subject'],
-            ticket_json['ticket']['requester_id'],
-            getDate(ticket_json['ticket']['created_at']),
-            getTime(ticket_json['ticket']['created_at']),
-            ticket_json['ticket']['description']))
+        try:
+            ticket_json = self.getResponse().json()  # Convert the response to json format 
+            print("\n#{0} - Ticket with subject '{1}', requested by {2} on {3} at {4} UTC\n-> Description: {5}".format(  # Display the desired ticket
+                ticket_json['ticket']['id'],
+                ticket_json['ticket']['subject'],
+                ticket_json['ticket']['requester_id'],
+                getDate(ticket_json['ticket']['created_at']),
+                getTime(ticket_json['ticket']['created_at']),
+                ticket_json['ticket']['description']))
+        except requests.exceptions.ConnectionError:
+            printConnectionError()
 
 
 class CountTickets(ShowRequest):
@@ -210,7 +222,6 @@ class CountTickets(ShowRequest):
         self.email = email
         self.api_token = api_token
         self.url = 'https://' + self.subdomain + '.zendesk.com/api/v2/tickets/count.json'
-    
 
 class RequestCodeError(Exception):
     """Create a custom exception called RequestCodeError"""
