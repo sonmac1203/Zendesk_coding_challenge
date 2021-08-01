@@ -1,6 +1,6 @@
 import requests
 
-from ticket_cli.constants import *
+from ticket_cli.config import *
 from ticket_cli.time_format import *
 from ticket_cli.menus import printPageMenu, printEmptyPageMenu, printConnectionErrorMenu
 from ticket_cli.error_display import *
