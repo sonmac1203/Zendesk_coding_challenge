@@ -2,7 +2,7 @@ import unittest
 import requests
 
 from ticket_cli.request import *
-from ticket_cli.constants import *
+from ticket_cli.config import *
 
 class TestRequest(unittest.TestCase):
     """Tests for the class ListRequests and ShowRequest"""
@@ -15,7 +15,7 @@ class TestRequest(unittest.TestCase):
         self.request_3 = ListRequests(SUBDOMAIN, 'notanemailaddress@fmail.com', 'notanapitoken')
         self.request_4 = ListRequests(SUBDOMAIN, EMAIL, API_TOKEN, 101)
         
-        # Show Request
+        # False Show Request
         self.request_6 = ShowRequest(10000000,'notasubdomain', 'notanemailaddress@fmail.com', 'notanapitoken')  # Parameterized
         self.request_7 = ShowRequest(1, SUBDOMAIN, EMAIL, 'notanapitoken')
         
@@ -23,12 +23,20 @@ class TestRequest(unittest.TestCase):
         self.request_8 = CountTickets('', EMAIL, API_TOKEN)
         self.request_9 = CountTickets('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', EMAIL, API_TOKEN)
         self.request_10 = CountTickets('ççßø˜†µåç', 'NOTANEMAILADDRESS', API_TOKEN)
+
+        # Possibly appropriate Show Request
+        self.request_11 = ShowRequest(1)
+        self.request_12 = ShowRequest(500)
     
     # Test the code returned from the request
     def test_request_code_200(self):
         """Test if the request returns code 200"""
         self.status_1 = self.request_1.getResponse().status_code
         self.assertEqual(self.status_1, 200)
+
+        if not self.request_11.checkError() and not self.request_12.checkError():  # If the ShowRequest succeeds
+            self.assertEqual(self.request_11.getResponse().status_code, 200)
+            self.assertEqual(self.request_12.getResponse().status_code, 200)
         
         
     def test_request_code_404(self):
@@ -38,6 +46,10 @@ class TestRequest(unittest.TestCase):
 
         self.status_6 = self.request_6.getResponse().status_code
         self.assertEqual(self.status_6, 404)
+
+        if self.request_11.checkError() and not self.request_12.checkError():  # If the ShowRequest fails
+            self.assertEqual(self.request_11.getResponse().status_code, 404)
+            self.assertEqual(self.request_12.getResponse().status_code, 404)
 
     def test_request_code_401(self):
         """Test if the request returns code 401"""
@@ -88,7 +100,14 @@ class TestRequest(unittest.TestCase):
         self.assertIs(self.check_6, True)
 
         self.check_7 = self.request_7.checkError()
-        self.assertIs(self.check_7, True)      
+        self.assertIs(self.check_7, True)
+
+    # Test if the ShowRequest return the desired ticket
+    def test_ticket_id(self):
+        if not self.request_11.checkError(): 
+            requested_id = self.request_11.id
+            returned_id = self.request_11.getResponse().json()['ticket']['id']
+            self.assertEqual(requested_id, returned_id)      
 
 
 if __name__ == '__main__':

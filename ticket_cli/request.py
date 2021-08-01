@@ -1,4 +1,5 @@
 import requests
+from requests import exceptions
 
 from ticket_cli.config import *
 from ticket_cli.time_format import *
@@ -176,7 +177,12 @@ class ListRequests:
             response = requests.get(self.url, auth = (self.email + '/token' , self.api_token))
             if response.status_code != 200:
                 raise RequestCodeError
-        except (UnicodeError, requests.exceptions.InvalidURL, RequestCodeError) as e:
+        except (
+            requests.exceptions.ConnectionError,
+            UnicodeError,
+            requests.exceptions.InvalidURL,
+            requests.exceptions.Timeout,
+            RequestCodeError) as e:
             return True
         return False
 
@@ -193,7 +199,8 @@ class ShowRequest(ListRequests):
             self.subdomain = SUBDOMAIN
             self.email = EMAIL
             self.api_token = API_TOKEN
-        self.url = 'https://' + self.subdomain + '.zendesk.com/api/v2/tickets/' + str(id) + '.json'
+        self.id = id
+        self.url = 'https://' + self.subdomain + '.zendesk.com/api/v2/tickets/' + str(self.id) + '.json'
 
     def viewResponse(self):
         """Display the chosen ticket to the console"""
