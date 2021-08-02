@@ -29,7 +29,7 @@ def printEmptyPageMenu():
     print("\nNo ticket to display")
     print("\n-> Press 1 to Reload")
     print("-> Press 2 to go back to MAIN MENU")
-    print("NOTE: Reload if you have recently added a new ticket.")
+    print("NOTE: Reload if you have recently added a new ticket or reconnected to the Internet")
 
 
 def printConnectionErrorMenu():
