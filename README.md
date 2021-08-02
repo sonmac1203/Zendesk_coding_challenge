@@ -1,4 +1,4 @@
-# Zendesk_draft# Zendesk Coding Challenge 2021
+# Zendesk Coding Challenge 2021
 This is a CLI Ticket Viewer that is built for the Coding Challenge proposed by Zendesk in August 2021.
 This Ticket Viewer will:
 - Connect to the Zendesk API
@@ -41,11 +41,13 @@ This Ticket Viewer will:
 
         python3 -m unittest
 
-- Choose the second option in the start menu to go with desired entries
+- Choose the second option in the start menu to go with desired entries (Highly recommended)
 ![Startmenu](/images/startmenu.png)
 
 - Change the values of the variables in /ticket_cli/config.py
 ![Config.py](/images/config.png)
+
+NOTE: Please make sure that these entries are valid (even if expired) so as not to crash the unit tests
 
         
 ## Interface
