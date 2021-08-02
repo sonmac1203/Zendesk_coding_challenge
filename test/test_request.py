@@ -32,15 +32,16 @@ class TestRequest(unittest.TestCase):
     # Test the code returned from the request
     def test_request_code_200(self):
         """Test if the request returns code 200"""
-        self.status_1 = self.request_1.getResponse().status_code
-        self.assertEqual(self.status_1, 200)
+        if not self.request_1.checkError() and not self.request_1.checkInvalidToken():
+            self.status_1 = self.request_1.getResponse().status_code
+            self.assertEqual(self.status_1, 200)
 
         if not self.request_11.checkError() and not self.request_12.checkError():  # If the ShowRequest succeeds
             self.assertEqual(self.request_11.getResponse().status_code, 200)
             self.assertEqual(self.request_12.getResponse().status_code, 200)
           
     def test_request_code_404(self):
-        """Test if the request returns code 404"""
+        '''Test if the request returns code 404'''
         self.status_2 = self.request_2.getResponse().status_code
         self.assertEqual(self.status_2, 404)
 
@@ -52,7 +53,7 @@ class TestRequest(unittest.TestCase):
             self.assertEqual(self.request_12.getResponse().status_code, 404)
 
     def test_request_code_401(self):
-        """Test if the request returns code 401"""
+        '''Test if the request returns code 401'''
         self.status_3 = self.request_3.getResponse().status_code
         self.assertEqual(self.status_3, 401)
     
@@ -60,30 +61,31 @@ class TestRequest(unittest.TestCase):
         self.assertEqual(self.status_7, 401)
 
     def test_request_code_400(self):
-        """Test if the request returns code 400"""
-        self.status_4 = self.request_4.getResponse().status_code
-        self.assertEqual(self.status_4, 400)
+        '''Test if the request returns code 400'''
+        if not self.request_4.checkInvalidToken():
+            self.status_4 = self.request_4.getResponse().status_code
+            self.assertEqual(self.status_4, 400)
 
     # Test exceptions thrown
     def test_RequestCodeError_thrown(self):
-        """Test if the request raises a RequestCodeError"""
+        '''Test if the request raises a RequestCodeError'''
         with self.assertRaises(RequestCodeError): 
             self.request_2.raiseRequestCodeError()
 
     def test_UnicodeError_thrown(self):
-        """Test if the request raises a UnicodeError"""
+        '''Test if the request raises a UnicodeError'''
         with self.assertRaises(UnicodeError):
             self.request_8.raiseUnicodeError(),
             self.request_9.raiseUnicodeError() 
 
     def test_InvalidURL_thrown(self):
-        """Test if the request raises a InvalidURL"""
+        '''Test if the request raises a InvalidURL'''
         with self.assertRaises(requests.exceptions.InvalidURL): 
             self.request_10.raiseInvalidURL()
 
     # Test error reported through boolean
     def test_check_error(self):
-        """Test the checkError() method"""
+        '''Test the checkError() method'''
         self.check_1 = self.request_1.checkError()
         self.assertIsNot(self.check_1, True)
         
@@ -102,12 +104,22 @@ class TestRequest(unittest.TestCase):
         self.check_7 = self.request_7.checkError()
         self.assertIs(self.check_7, True)
 
-    # Test if the ShowRequest return the desired ticket
     def test_ticket_id(self):
+        '''Test if the request returns the desired ticket id'''
         if not self.request_11.checkError(): 
             requested_id = self.request_11.id
             returned_id = self.request_11.getResponse().json()['ticket']['id']
-            self.assertEqual(requested_id, returned_id)      
+            self.assertEqual(requested_id, returned_id)
+
+    def test_empty_portal(self):
+        '''Test if the Count Tickets returns 0 if the online portal has no ticket'''
+        if not self.request_1.checkError():
+            if len(self.request_1.getResponse().json()['tickets']) == 0:
+                self.assertEqual(self.request_1.getTotalTickets(), 0)
+
+        if not self.request_11.checkError():
+            if self.request_11.getResponse().json()['error'] == 'RecordNotFound':
+                self.assertIs(self.request_11.check400And404(), True)                
 
 
 if __name__ == '__main__':
