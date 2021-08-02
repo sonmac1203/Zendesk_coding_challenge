@@ -36,7 +36,7 @@ This Ticket Viewer will:
 
         python3 ticket_cli
         
-### Testing
+## Testing
 - Run the unit tests
 
         python3 -m unittest
