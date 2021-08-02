@@ -1,4 +1,5 @@
 import requests
+from requests import exceptions
 from requests.sessions import Request
 
 from ticket_cli.config import SUBDOMAIN, EMAIL, API_TOKEN, PAGE_LIMIT
@@ -168,6 +169,17 @@ class ListRequests:
         '''Raise InvalidURL for unit testing'''
         response = requests.get(self.url, auth=(self.email + '/token', self.api_token))
 
+    def checkInvalidToken(self):
+        '''Check if the token is incorrect or has been expired'''
+        try:
+            response = requests.get(self.url, auth=(self.email + '/token', self.api_token))
+            if response.status_code != 200:
+                raise RequestCodeError
+        except RequestCodeError:
+            if response.status_code == 401:
+                return True
+        return False
+            
     def checkError(self):
         '''Check for errors when making the request and catch them'''
         try:
@@ -228,7 +240,6 @@ class ShowRequest(ListRequests):
         except RequestCodeError:
             if response.status_code in [400, 404]:
                 return True
-
 
 
 class CountTickets(ShowRequest):
