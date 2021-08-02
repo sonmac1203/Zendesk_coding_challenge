@@ -36,7 +36,7 @@ def main():
                     request = ShowRequest(ticket_id, subdomain, email, api_token)
                 else: 
                     request = ShowRequest(ticket_id)
-                if (not request.checkInformError()): # Check if there is any issue with the request
+                if not request.checkInformError(): # Check if there is any issue with the request
                     print("\nSuccessfully requested the ticket! Please wait ...")
                     request.viewResponse()
                 else:
@@ -49,7 +49,7 @@ def getTicketId():
     """Receive the ticket number to display"""
     while True:
         try:
-            ans = int(input("Please enter ticket #id: "))
+            ans = int(input("\nPlease enter ticket #id: "))
             break
         except ValueError:
             print("\nPlease enter an integer\n")
@@ -77,7 +77,8 @@ def getOptionStart():
     return ans
 
 def sayGoodbye():
-    print("\nThank you for using the program. Goodbye!\n")
+    print("\nThank you for using the program. Goodbye!")
+    print("Created by Son Mac, August 2021\n")
 
 
 
