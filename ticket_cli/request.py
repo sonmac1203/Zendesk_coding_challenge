@@ -1,4 +1,5 @@
 import requests
+from requests.sessions import Request
 
 from ticket_cli.config import SUBDOMAIN, EMAIL, API_TOKEN, PAGE_LIMIT
 from ticket_cli.time_format import getDate, getTime
@@ -211,6 +212,23 @@ class ShowRequest(ListRequests):
                 ticket_json['ticket']['description']))
         except requests.exceptions.ConnectionError:
             printConnectionError()
+    
+    def check400And404(self):
+        '''Check if 404 Not Found or 400 Bad Request is raised'''
+        try:
+            response = requests.get(self.url, auth=(self.email + '/token', self.api_token))
+            if response.status_code != 200:
+                raise RequestCodeError
+        except (
+            requests.exceptions.ConnectionError,
+            UnicodeError,
+            requests.exceptions.InvalidURL,
+            requests.exceptions.Timeout):
+            return False
+        except RequestCodeError:
+            if response.status_code in [400, 404]:
+                return True
+
 
 
 class CountTickets(ShowRequest):
