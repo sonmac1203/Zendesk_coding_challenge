@@ -19,6 +19,7 @@ class DateTestCase(unittest.TestCase):
         self.assertEqual(formatted_time_1, '21:50:50')
         formatted_time_2 = getTime(self.unformatted_2)
         self.assertEqual(formatted_time_2, '03:15:45')
+        
 
 if __name__ == '__main__':
     unittest.main()

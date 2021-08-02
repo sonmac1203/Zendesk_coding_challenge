@@ -1,5 +1,6 @@
-from ticket_cli.request import *
+from ticket_cli.request import ListRequests, ShowRequest
 from ticket_cli.menus import printMainMenu, printStartMenu
+
 
 def main():
 
@@ -25,7 +26,7 @@ def main():
                     request = ListRequests(subdomain, email, api_token)
                 else:
                     request = ListRequests()
-                if (not request.checkInformError()): # Check if there is any issue with the request
+                if not request.checkInformError():  # Check if there is any issue with the request
                     print("\nSuccessfully requested the tickets! Please wait ...")
                     request.viewResponse()
                 else:
@@ -34,7 +35,7 @@ def main():
                 ticket_id = getTicketId()
                 if custom:
                     request = ShowRequest(ticket_id, subdomain, email, api_token)
-                else: 
+                else:
                     request = ShowRequest(ticket_id)
                 if not request.checkInformError(): # Check if there is any issue with the request
                     print("\nSuccessfully requested the ticket! Please wait ...")
@@ -45,8 +46,9 @@ def main():
                 sayGoodbye()
                 return
 
+
 def getTicketId():
-    """Receive the ticket number to display"""
+    '''Receive the ticket number to display'''
     while True:
         try:
             ans = int(input("\nPlease enter ticket #id: "))
@@ -55,9 +57,10 @@ def getTicketId():
             print("\nPlease enter an integer\n")
     return ans
 
+
 # Methods to display menus and statements
 def getOptionMainMenu():
-    """Receive an option from the user in the MAIN MENU"""
+    '''Receive an option from the user in the MAIN MENU'''
     while True:
         printMainMenu()
         ans = input("\nChoice: ")
@@ -67,8 +70,9 @@ def getOptionMainMenu():
             print("\nPlease choose again")
     return ans
 
+
 def getOptionStart():
-    """Receive an option from the user at the beginning of the program"""
+    '''Receive an option from the user at the beginning of the program'''
     while True: 
         printStartMenu()
         ans = input("\nChoice: ")
@@ -76,10 +80,11 @@ def getOptionStart():
             break
     return ans
 
+
 def sayGoodbye():
+    '''Print gooodye statements'''
     print("\nThank you for using the program. Goodbye!")
     print("Created by Son Mac, August 2021\n")
-
 
 
 if __name__ == '__main__':

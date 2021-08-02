@@ -4,6 +4,7 @@ import requests
 from ticket_cli.request import *
 from ticket_cli.config import *
 
+
 class TestRequest(unittest.TestCase):
     """Tests for the class ListRequests and ShowRequest"""
 
@@ -14,9 +15,9 @@ class TestRequest(unittest.TestCase):
         self.request_2 = ListRequests('notasubdomain', 'notanemailaddress@fmail.com', 'notanapitoken')  # Parameterized
         self.request_3 = ListRequests(SUBDOMAIN, 'notanemailaddress@fmail.com', 'notanapitoken')
         self.request_4 = ListRequests(SUBDOMAIN, EMAIL, API_TOKEN, 101)
-        
+
         # False Show Request
-        self.request_6 = ShowRequest(10000000,'notasubdomain', 'notanemailaddress@fmail.com', 'notanapitoken')  # Parameterized
+        self.request_6 = ShowRequest(10000000, 'notasubdomain', 'notanemailaddress@fmail.com', 'notanapitoken')  # Parameterized
         self.request_7 = ShowRequest(1, SUBDOMAIN, EMAIL, 'notanapitoken')
         
         # Count Request
@@ -37,8 +38,7 @@ class TestRequest(unittest.TestCase):
         if not self.request_11.checkError() and not self.request_12.checkError():  # If the ShowRequest succeeds
             self.assertEqual(self.request_11.getResponse().status_code, 200)
             self.assertEqual(self.request_12.getResponse().status_code, 200)
-        
-        
+          
     def test_request_code_404(self):
         """Test if the request returns code 404"""
         self.status_2 = self.request_2.getResponse().status_code

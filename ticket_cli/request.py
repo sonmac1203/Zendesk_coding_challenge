@@ -1,16 +1,15 @@
 import requests
-from requests import exceptions
 
-from ticket_cli.config import *
-from ticket_cli.time_format import *
+from ticket_cli.config import SUBDOMAIN, EMAIL, API_TOKEN, PAGE_LIMIT
+from ticket_cli.time_format import getDate, getTime
 from ticket_cli.menus import printPageMenu, printEmptyPageMenu, printConnectionErrorMenu
 from ticket_cli.error_display import *
 
 
 class ListRequests:
 
-    def __init__(self, subdomain = None, email = None, api_token = None, page_size = PAGE_LIMIT):
-        """Set dafault/customized authentication factors, page size, and URL of the request"""
+    def __init__(self, subdomain=None, email=None, api_token=None, page_size=PAGE_LIMIT):
+        '''Set dafault/customized authentication factors, page size, and URL of the request'''
         if subdomain is not None and email is not None and api_token is not None:
             self.subdomain = subdomain
             self.email = email
@@ -22,18 +21,18 @@ class ListRequests:
             self.api_token = API_TOKEN
             self.page_size = PAGE_LIMIT
         self.url = 'https://' + self.subdomain + '.zendesk.com/api/v2/tickets.json?page[size]=' + str(self.page_size)
-    
+
     def setURL(self, url):
-        """Set the URL for the request"""
+        '''Set the URL for the request'''
         self.url = url
 
     def getResponse(self):
-        """Return the response from the API"""
-        response = requests.get(self.url, auth = (self.email + '/token' , self.api_token))
+        '''Return the response from the API'''
+        response = requests.get(self.url, auth=(self.email + '/token', self.api_token))
         return response
 
     def getTotalTickets(self):
-        """Return the total number of tickets using the Count Tickets API and return None if error"""
+        '''Return the total number of tickets using the Count Tickets API and return None if error'''
         count = CountTickets(self.subdomain, self.email, self.api_token)
         try:
             return count.getResponse().json()['count']['value']
@@ -41,12 +40,11 @@ class ListRequests:
             return None
 
     def checkInformError(self):
-        """Check for errors when making the request, catch them, and inform them"""
+        '''Check for errors when making the request, catch them, and inform them'''
         try:
-            response = requests.get(self.url, auth = (self.email + '/token' , self.api_token))
+            response = requests.get(self.url, auth=(self.email + '/token', self.api_token))
             if response.status_code != 200:
                 raise RequestCodeError
-
         except requests.exceptions.ConnectionError:
             printConnectionError()
             return True
@@ -65,7 +63,7 @@ class ListRequests:
         return False
 
     def viewResponse(self):
-        """Display the list of tickets to the console"""
+        '''Display the list of tickets to the console'''
         while True:  # Ask if the user wants to see the total number of tickets then call the API
             ans_ticket = input("\nDo you want to see the total number of tickets? (yes/no): ")
             if ans_ticket in ['yes', 'YES', 'Yes', 'y']:
@@ -77,9 +75,8 @@ class ListRequests:
                     print("\nCannot determine the number of tickets")
                 break
             elif ans_ticket in ['no', 'NO', 'No', 'n']:
-                break
-                        
-        page_number = 1
+                break      
+        page_number = 1  # Initialize page number
         while True:
             while True:  # This loop helps to reload the page
                 try:
@@ -102,7 +99,6 @@ class ListRequests:
                                 break
                             elif ans == '2':
                                 return
-
                 # Handle ConnectionError when 
                 # loading a new page fails
                 except requests.exceptions.ConnectionError:
@@ -138,7 +134,7 @@ class ListRequests:
                     print("\nPlease choose again")
 
     def informError(self, status):
-        """Inform the user about the code error they encounter when making the request"""
+        '''Inform the user about the code error they encounter when making the request'''
         if status == 400:
             print400Error()
         elif status == 401:
@@ -158,23 +154,23 @@ class ListRequests:
 
     # Methods for unit testing
     def raiseRequestCodeError(self):
-        """Raise RequestCodeError for unit testing"""
-        response = requests.get(self.url, auth = (self.email + '/token' , self.api_token))
+        '''Raise RequestCodeError for unit testing'''
+        response = requests.get(self.url, auth=(self.email + '/token', self.api_token))
         if response.status_code != 200:
             raise RequestCodeError
 
     def raiseUnicodeError(self):
-        """Raise UnicodeError for unit testing"""
-        response = requests.get(self.url, auth = (self.email + '/token' , self.api_token))
+        '''Raise UnicodeError for unit testing'''
+        response = requests.get(self.url, auth=(self.email + '/token', self.api_token))
 
     def raiseInvalidURL(self):
-        """Raise InvalidURL for unit testing"""
-        response = requests.get(self.url, auth = (self.email + '/token' , self.api_token))
+        '''Raise InvalidURL for unit testing'''
+        response = requests.get(self.url, auth=(self.email + '/token', self.api_token))
 
     def checkError(self):
-        """Check for errors when making the request and catch them"""
+        '''Check for errors when making the request and catch them'''
         try:
-            response = requests.get(self.url, auth = (self.email + '/token' , self.api_token))
+            response = requests.get(self.url, auth=(self.email + '/token', self.api_token))
             if response.status_code != 200:
                 raise RequestCodeError
         except (
@@ -189,8 +185,8 @@ class ListRequests:
 
 class ShowRequest(ListRequests):
 
-    def __init__(self, id, subdomain = None, email = None, api_token = None):
-        """Set default/customized authentication factors and URL of the request"""
+    def __init__(self, id, subdomain=None, email=None, api_token=None):
+        '''Set default/customized authentication factors and URL of the request'''
         if subdomain is not None and email is not None and api_token is not None:
             self.subdomain = subdomain
             self.email = email
@@ -203,7 +199,7 @@ class ShowRequest(ListRequests):
         self.url = 'https://' + self.subdomain + '.zendesk.com/api/v2/tickets/' + str(self.id) + '.json'
 
     def viewResponse(self):
-        """Display the chosen ticket to the console"""
+        '''Display the chosen ticket to the console'''
         try:
             ticket_json = self.getResponse().json()  # Convert the response to json format 
             print("\n#{0} - Ticket with subject '{1}', requested by {2} on {3} at {4} UTC\n-> Description: {5}".format(  # Display the desired ticket
@@ -220,12 +216,13 @@ class ShowRequest(ListRequests):
 class CountTickets(ShowRequest):
 
     def __init__(self, subdomain, email, api_token):
-        """Set dafault/customized authentication factors and URL of the request"""
+        '''Set dafault/customized authentication factors and URL of the request'''
         self.subdomain = subdomain
         self.email = email
         self.api_token = api_token
         self.url = 'https://' + self.subdomain + '.zendesk.com/api/v2/tickets/count.json'
 
+
 class RequestCodeError(Exception):
-    """Create a custom exception called RequestCodeError"""
+    '''Create a custom exception called RequestCodeError'''
     pass
