@@ -26,7 +26,7 @@ This Ticket Viewer will:
 2. Redirect to the root directory of this repository
 3. Download and install **Requests**
 
-        python -m pip install requests
+        pip install requests
     
 4. Install the program
 
@@ -45,11 +45,8 @@ This Ticket Viewer will:
 ![Startmenu](/images/startmenu.png)
 
 - Change the values of the variables in /ticket_cli/config.py
-![Config.py](/images/config.png)
+![Config.py](/images/config.png)      
 
-NOTE: Please make sure that these entries are valid (even if expired) so as not to crash the unit tests
-
-        
 ## Interface
 ![Interface](/images/interface.png)
 
