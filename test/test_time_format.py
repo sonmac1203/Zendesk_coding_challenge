@@ -1,10 +1,10 @@
 import unittest
 
-from ticket_cli.time_format import *
+from ticket_cli.time_format import getTime, getDate
 
 
 class DateTestCase(unittest.TestCase):
-    """Test for the two methods in time_format.py"""
+    """Tests for the two methods in time_format.py"""
     unformatted_1 = '2001-03-12T21:50:50Z'
     unformatted_2 = '2010-06-08T03:15:45Z'
 

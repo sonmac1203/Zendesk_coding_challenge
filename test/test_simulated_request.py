@@ -1,11 +1,9 @@
 import unittest
 import json
-import requests
 
 
 from unittest.mock import patch
 from ticket_cli.request import ListRequests, ShowRequest, RequestCodeError
-from ticket_cli.config import *
 
 
 class MockResponse:

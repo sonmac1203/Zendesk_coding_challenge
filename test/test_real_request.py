@@ -2,7 +2,7 @@ import unittest
 import requests
 
 from ticket_cli.request import ListRequests, ShowRequest, CountTickets
-from ticket_cli.config import *
+from ticket_cli.config import EMAIL, API_TOKEN
 
 
 class TestRequest(unittest.TestCase):
