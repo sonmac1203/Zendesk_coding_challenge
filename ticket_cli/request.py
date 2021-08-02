@@ -154,7 +154,7 @@ class ListRequests:
         elif status == 503:
             print503Error()
 
-    # Methods for unit testing
+    # Methods EXCLUSIVELY for unit testing 
     def raiseRequestCodeError(self):
         '''Raise RequestCodeError for unit testing'''
         response = requests.get(self.url, auth=(self.email + '/token', self.api_token))
@@ -169,15 +169,11 @@ class ListRequests:
         '''Raise InvalidURL for unit testing'''
         response = requests.get(self.url, auth=(self.email + '/token', self.api_token))
 
-    def checkInvalidToken(self):
-        '''Check if the token is incorrect or has been expired'''
-        try:
-            response = requests.get(self.url, auth=(self.email + '/token', self.api_token))
-            if response.status_code != 200:
-                raise RequestCodeError
-        except RequestCodeError:
-            if response.status_code == 401:
-                return True
+    def checkEmpty(self):
+        '''Check if the list returned is empty'''
+        response = requests.get(self.url, auth=(self.email + '/token', self.api_token))
+        if len(response.json()['tickets']) == 0:
+            return True
         return False
             
     def checkError(self):
@@ -194,6 +190,8 @@ class ListRequests:
             RequestCodeError) as e:
             return True
         return False
+
+
 
 
 class ShowRequest(ListRequests):
