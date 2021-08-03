@@ -14,6 +14,7 @@ This Ticket Viewer will:
 
 ## Installation
 ### Requirements and Recommendations
+- Run the program on Apple's terminal or Ubuntu for the best performance
 - Must have the lastest version of Python installed
 - Must have pip installed
 - Should run the program in a Python virtual environment. See [this link](https://docs.python.org/3/library/venv.html) for more details
@@ -49,5 +50,8 @@ This Ticket Viewer will:
 
 ## Interface
 ![Interface](/images/interface.png)
+
+## Limitations
+Due to limited time, this program was only developed for MacOS and Ubuntu users, so it might not operated as expected on Windows.
 
 
