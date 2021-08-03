@@ -52,6 +52,6 @@ This Ticket Viewer will:
 ![Interface](/images/interface.png)
 
 ## Limitations
-Due to limited time, this program was only developed for MacOS and Ubuntu users, so it might not operated as expected on Windows.
+Due to limited time, this program was only developed for MacOS and Ubuntu users, so it might not operate as expected on Windows.
 
 
